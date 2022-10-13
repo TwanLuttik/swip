@@ -7,6 +7,11 @@ interface Padding {
 	paddingRight?: number;
 	paddingBottom?: number;
 	padding?: number;
+	marginTop?: number;
+	marginLeft?: number;
+	marginRight?: number;
+	marginBottom?: number;
+	margin?: number;
 }
 
 interface IBlockProps extends Padding {
@@ -37,15 +42,25 @@ export const Block = (p: IBlockProps) => {
 		paddingLeft,
 		paddingRight,
 		paddingTop,
+		margin,
+		marginBottom,
+		marginLeft,
+		marginRight,
+		marginTop,
 	} = p;
 
 	const s: CSSProperties = {
 		...(p.vCenter && { justifyContent: 'center', alignItems: 'center' }),
 		...(padding && { padding: p.padding }),
-		...(paddingBottom && { padding: p.paddingBottom }),
-		...(paddingLeft && { padding: p.paddingLeft }),
-		...(paddingRight && { padding: p.paddingRight }),
-		...(paddingTop && { padding: p.paddingTop }),
+		...(paddingBottom && { paddingBottom: p.paddingBottom }),
+		...(paddingLeft && { paddingLeft: p.paddingLeft }),
+		...(paddingRight && { paddingRight: p.paddingRight }),
+		...(paddingTop && { paddingTop: p.paddingTop }),
+		...(margin && { margin }),
+		...(marginBottom && { marginBottom }),
+		...(marginLeft && { marginLeft }),
+		...(marginRight && { marginRight }),
+		...(marginTop && { marginTop }),
 		display: 'flex',
 		flexDirection: row ? 'row' : 'column',
 		height,

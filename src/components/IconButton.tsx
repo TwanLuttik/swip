@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 import { Icon, Icons } from './Icon';
 
 interface IIconButtonProps {
@@ -7,11 +7,12 @@ interface IIconButtonProps {
 	color?: string;
 	onClick?: () => void;
 	size?: number;
+	style?: CSSProperties;
 }
 
 export const IconButton = (p: IIconButtonProps) => {
 	return (
-		<IconBody onClick={p.onClick}>
+		<IconBody onClick={p.onClick} style={p.style}>
 			<Icon name={p.icon} color={p.color || 'white'} size={p.size || 18} />
 		</IconBody>
 	);

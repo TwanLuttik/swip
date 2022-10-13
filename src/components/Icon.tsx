@@ -10,7 +10,7 @@ interface IIconProps {
 	style?: CSSProperties;
 }
 
-export type Icons = 'circle_minus' | 'cog' | 'plus' ;
+export type Icons = 'circle_minus' | 'cog' | 'plus' | 'xmark' ;
 
 export const Icon = (props: IIconProps) => {
 	const s = props?.size || 20;

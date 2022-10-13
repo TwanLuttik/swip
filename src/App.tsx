@@ -5,7 +5,7 @@ import { Sidebar } from './app/main/Sidebar';
 import styled from 'styled-components';
 import Axios, { AxiosResponse } from 'axios';
 import { ResultsContainer } from './app/main/ResultsContainer';
-import { Block } from './components';
+import { Block, IconButton, Text } from './components';
 import Modal from 'react-modal';
 import { Settings } from './app/settings/Settings';
 
@@ -25,9 +25,21 @@ export const App = () => {
 	const currentState = useSimple(core.current);
 
 	const MAIN_REQUEST = async (m: string, path: string) => {
-		// const a = Axios.create({ method: m, url: path });
-		// a.
-		const res = await Axios({ method: m, url: path, data: currentState.body });
+		let newBodyObject = {};
+		currentState.body
+			.filter((v) => !!v.key)
+			.forEach((item) => {
+				// @ts-ignore
+				newBodyObject[item.key] = item.value;
+			});
+
+		const res = await Axios({
+			method: m,
+			url: path,
+			data: newBodyObject,
+		});
+		console.log(res);
+
 		setResponse(res);
 	};
 
@@ -49,6 +61,13 @@ export const App = () => {
 		},
 		[bodyNewEntry]
 	);
+
+	const removeEntryFromBody = (index: number) => {
+		let a = currentState.body;
+		a.splice(index, 1);
+
+		core.current.patchObject({ body: a });
+	};
 
 	return (
 		<div className="bg-black h-full min-h-full flex row">
@@ -142,28 +161,39 @@ export const App = () => {
 					</Block>
 					<Block>
 						<Block row paddingLeft={10}>
-							<p style={{ marginRight: 190 }}>key</p>
-							<p>value</p>
+							<Text style={{ marginRight: 155 }}>Name</Text>
+							<Text>Value</Text>
 						</Block>
 						{currentTab === 'body' && (
 							<div>
 								{currentState?.body &&
 									Object.entries(currentState?.body).map(
 										(bodyItem, bodyIndex) => (
-											<div key={bodyIndex}>
+											<div
+												key={bodyIndex}
+												style={{ display: 'flex', alignItems: 'center' }}
+											>
 												<SmallInput
 													autoCorrect="off"
-													onChange={(v) => {
-														let a = currentState.body;
-														a[bodyItem[0]] = v.currentTarget.value;
-														core.current.patchObject({ body: a });
-													}}
-													value={bodyItem[0]}
+													onChange={(v) => {}}
+													// onChange={(v) => {
+													// 	let a = currentState.body;
+													// 	a[bodyItem[0]] = v.currentTarget.value;
+													// 	core.current.patchObject({ body: a });
+													// }}
+													value={bodyItem[1].key}
 												/>
 												<SmallInput
 													autoCorrect="off"
 													onChange={(v) => {}}
-													value={bodyItem[1]}
+													value={bodyItem[1].value}
+												/>
+												<p>{bodyIndex}</p>
+												<IconButton
+													icon="xmark"
+													size={14}
+													style={{ marginLeft: 10 }}
+													onClick={() => removeEntryFromBody(bodyIndex)}
 												/>
 											</div>
 										)
@@ -181,10 +211,11 @@ export const App = () => {
 										value={bodyNewEntry.value}
 										onKeyDown={(v) => {
 											if (v.key === 'Enter') {
-												let a = currentState.body;
+												let b = currentState.body;
 
-												a[bodyNewEntry.key] = bodyNewEntry.value;
-												core.current.patchObject({ body: a });
+												b.push(bodyNewEntry);
+
+												core.current.patchObject({ body: b });
 												setBodyNewEntry({ key: '', value: '' });
 											}
 										}}
@@ -193,6 +224,7 @@ export const App = () => {
 							</div>
 						)}
 					</Block>
+					<div style={{ marginTop: 50 }}>{JSON.stringify(document.cookie)}</div>
 				</div>
 			</div>
 			<ResultsContainer axiosResults={response} />
@@ -272,6 +304,7 @@ const UrlInput = styled.input`
 	color: white;
 	background-color: unset;
 	font-size: 14px;
+	width: 100%;
 	/* padding: 2px 6px; */
 	/* margin: 5px; */
 	outline: none;
@@ -280,7 +313,7 @@ const UrlInput = styled.input`
 const SmallInput = styled.input`
 	background-color: #1e1e1e;
 	border-radius: 6px;
-	border: solid 1px #ffffff12;
+	/* border: solid 1px #ffffff12; */
 	color: white;
 	font-size: 14px;
 	padding: 2px 6px;
